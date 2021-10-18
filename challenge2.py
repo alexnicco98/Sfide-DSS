@@ -40,7 +40,7 @@ from os.path import join
     if 'Latitude' in info and 'Longitude' in info:
         return [info['Latitude'], info['Longitude']]'''
 
-
+# sistemare in base alla libreria pyexiv2
 def dms_to_dd(gps_coords, gps_coords_ref):
     d, m, s = gps_coords
     dd = d + m / 60 + s / 3600
