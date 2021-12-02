@@ -22,7 +22,7 @@ check_prep(path)
 
 def save_file(num):
     im = pyautogui.screenshot()
-    name_file = path + "/" + str(num) + ".jpg"
+    name_file = path + "/" + str(num) + ".png"
     num += 1
     print(name_file)
     im.save(name_file)
