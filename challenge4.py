@@ -1,45 +1,46 @@
 #!/usr/bin/python
 import binascii
-import codecs
-import os
-import struct
-from binascii import unhexlify
-from binascii import hexlify
+import shutil
 from pathlib import Path
 
-size = 2857750978
+size = 0
 blocksize = 1024
-
-
 
 
 def HexView(filename):
     sector = size / blocksize #blocksize / 32
     with open(filename, 'rb') as in_file:
-        find = 0
-
-        while sector > 0 and find == 0:
+        while sector > 0:
             space = 32
             hexdata = ""
             name = ""
             while space > 0:
                 aux = in_file.read(1).hex()
-
-                if int(aux, 16) == int("E5", 16):
-                    name = in_file.read(1).hex()+" "+in_file.read(1).hex()+" "+in_file.read(1).hex()
+                #print("Name deleted file: " +  bytes.fromhex("209C593904E021B7").decode('latin-1'))
+                if int(aux, 16) == int("E5", 16) and space == 32:
+                    name = in_file.read(7).hex()
+                    space -= 6
+                    aux += name
                     #print("name: " + bytes.fromhex(name).decode('ascii'))
+                    ext_hex = in_file.read(3).hex()
                     try:
-                        print("Name deleted file: " +  bytes.fromhex(name).decode('utf-8'))
+                        file_name = bytes.fromhex(name).decode('utf-8')
+                        ext = bytes.fromhex(ext_hex).decode('utf-8')
+                        if not file_name.isalnum() and not ext.isalnum():
+                            #print("not ascii")
+                            break
+                        file_name = file_name.replace(bytes.fromhex('00').decode('utf-8'), "")
+                        print("Name deleted file: " + file_name + "    extension format: " + ext)
                         #print("trovato")
                     finally:
+                        in_file.read(21)
                         break
                     #print("Name deleted file: " +  bytes.fromhex(name).decode('latin-1'))
-                    break
-                    space -= 2
-                    aux += name
                     print("trovato")
-                    find = 1
                     break
+                else:
+                    in_file.read(31)
+                    space = 0
                 hexdata = hexdata + aux + " "
                 space -= 1
             #print("hexa: " + hexdata)
@@ -70,6 +71,9 @@ def prova2(filename):
 
 
 file = "\\\\.\\D:"
+usage = shutil.disk_usage("D:\\")
+size = usage[0]
+print("Spazio totale del disco: " + str(usage[0]) + " bytes")
 #file = "C:/Users/anicc/Desktop/Sfide-DSS/prova.txt"
 HexView(file)
 #prova(file)
